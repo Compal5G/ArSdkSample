@@ -63,18 +63,14 @@ public class LoadRGB : MonoBehaviour
     {
         while (true)
         {
-            //Debug.Log("jorseph1");
-
             if (API.xslam_ready())
             {
-                //Debug.Log("jorseph2");
                 if (GameObject.Find("TogglePanel").GetComponent<StreamToggle>().RgbOn())
-                //if (true)
                 {
                    
                     lock (thisLock)
                     {
-                        Debug.Log("jorseph thread B id " + Thread.CurrentThread.ManagedThreadId);
+                        //Debug.Log("thread B id " + Thread.CurrentThread.ManagedThreadId);
                         try
                         {
                             if (API.xslam_get_rgb_image_RGBA(pixelPtr, tex.width, tex.height, ref rgbTimestamp))
@@ -94,7 +90,7 @@ public class LoadRGB : MonoBehaviour
                             //yield return new WaitForSeconds(0.3f);
                             return;
                         }
-                        Debug.Log("jorseph thread E id " + Thread.CurrentThread.ManagedThreadId);
+                        //Debug.Log("thread E id " + Thread.CurrentThread.ManagedThreadId);
                     }
                 }
             }
@@ -178,10 +174,10 @@ public class LoadRGB : MonoBehaviour
                 //}
                 lock (thisLock)
                 {
-                    Debug.Log("jorseph apply B");
+                   //Debug.Log("apply B");
                     tex.SetPixels32(pixel32);
                     tex.Apply();
-                    Debug.Log("jorseph apply E");
+                    //Debug.Log("apply E");
                 }
             }
         }

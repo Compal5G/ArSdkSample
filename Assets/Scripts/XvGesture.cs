@@ -11,6 +11,7 @@ public struct GestureInfo
     public int dis_diff_;  // distance of double pinch
     public float x;
     public float y;
+    public int count;
 };
 
 public struct EventInfo
@@ -19,6 +20,7 @@ public struct EventInfo
     public int dis_diff_;
     public float x;
     public float y;
+    public int count;
 };
 
 public class XvGesture : MonoBehaviour
@@ -27,7 +29,11 @@ public class XvGesture : MonoBehaviour
     private AndroidJavaObject ges = null;
     private Queue q = new Queue(); // event use queue to avoid miss
     private GestureInfo currGes;
+    private GestureInfo lastGes;
+
+    private EventInfo lastEven;
     private float gesStay = 0.0f;
+    private int noGestureCount = 0;
     private bool inited = false;
 
     void Awake()
@@ -53,6 +59,7 @@ public class XvGesture : MonoBehaviour
         tmpGes.dis_diff_ = 0;
         tmpGes.x = 0.0f;
         tmpGes.y = 0.0f;
+	    tmpGes.count = 0;
 
         AndroidJavaClass arrayClass  = new AndroidJavaClass("java.lang.reflect.Array");
         AndroidJavaObject xvInfos = ges.Call<AndroidJavaObject>("getXvHandInfos");
@@ -165,27 +172,47 @@ public class XvGesture : MonoBehaviour
                         ev.dis_diff_ = handInfo.Get<int>("dis_diff_");
                         ev.x = x1 * width;
                         ev.y = y1 * height;
+                        ev.count = 0;
                         // There are static gestures in usens event
                         if (ev.id == 20 || ev.id == 10) {
                             tmpGes.id = ev.id + 50;
                             tmpGes.dis_diff_ = ev.dis_diff_;
                         } else {
-                            q.Enqueue(ev);
+                            Debug.Log("Event before q = " + ev.id);
+                            if(lastEven.id == ev.id) {
+                                lastEven.count++;
+                            } else {
+                                lastEven = ev;
+                                lastEven.count++;
+                            }
+                            if(lastEven.count >= 3) {
+                                q.Enqueue(ev);
+                            }
                         }
                     }
                 }
             }
         }
 
-
-        if (tmpGes.id != -1) {
-            currGes = tmpGes;
-            gesStay = 0.0f;
-        } else {
-            if (gesStay < 1.0) {
+        if (tmpGes.id != -1) {  //get gesture.
+            if(lastGes.id ==  tmpGes.id) {  //make sure if the gesture can be trust.
+                lastGes.count++;
+            } else {  // the new gesture.
+                lastGes = tmpGes;
+                lastGes.count++;
+            }
+            if(lastGes.count >= 3) {  //count is greater than 3, the gesutre is credible.
+                noGestureCount = 0;  //clean the count of noGesture case.
+                currGes = lastGes;
+            }
+        } else { //detect no gesture.
+            noGestureCount++;
+            if(gesStay < 1.0) {
                 gesStay += Time.fixedDeltaTime;
             } else {
-                currGes = tmpGes;
+                if(noGestureCount >= 3) {
+                    currGes = tmpGes;
+                }
             }
         }
     }

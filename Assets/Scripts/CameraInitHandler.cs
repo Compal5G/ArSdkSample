@@ -28,6 +28,8 @@ public class CameraInitHandler : MonoBehaviour
     static Text debugText;
     public Camera[] SVRCameras;
 
+    private int i = 0;
+
     private SvrManager svrManager = null;
 
     // ==================================
@@ -378,14 +380,18 @@ public class CameraInitHandler : MonoBehaviour
     private EventInfo GetCurrEvent()
     {
         // update
+        i = 0;
         foreach (EventInfo ev in XvGesture.GetEvents())
         {
+            //Debug.Log(" ==== ev " + i + " id = " + ev.id);
             events.Add(ev);
+            i++;
         }
 
         // unique list, then remove bad events
         // should not be uniqued if need x,y
         events = events.Distinct().ToList();
+        //Debug.Log(" ==== events count " + events.Count);
         for (int i = events.Count - 1; i >= 0; i--)
         {
             if (events[i].id == 21)
@@ -403,12 +409,14 @@ public class CameraInitHandler : MonoBehaviour
         // no old event
         if (currEvent.id == -1)
         {
+            Debug.Log("currEvent.id == -1");
             if (events.Count == 0)
             {
                 return currEvent;
             }
             else
             {
+                Debug.Log("events.Count > 0");
                 currEvent = events[0];
                 currEventTime = DateTime.UtcNow;
                 events.RemoveAt(0);
@@ -425,6 +433,7 @@ public class CameraInitHandler : MonoBehaviour
 
         if (events.Count > 0)
         {
+            Debug.Log("events.Count > 0");
             currEvent = events[0];
             currEventTime = DateTime.UtcNow;
             events.RemoveAt(0);
