@@ -194,7 +194,8 @@ public class XvGesture : MonoBehaviour
             }
         }
 
-        if (tmpGes.id != -1) {  //get gesture.
+        if (tmpGes.id > 0) {  //get gesture.
+            gesStay = 0;
             if(lastGes.id ==  tmpGes.id) {  //make sure if the gesture can be trust.
                 lastGes.count++;
             } else {  // the new gesture.

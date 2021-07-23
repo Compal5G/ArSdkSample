@@ -174,7 +174,7 @@ public class CameraInitHandler : MonoBehaviour
         // Get event
         GetCurrEvent();
 
-        if (currGes.id != -1)
+        if (currGes.id > 0)
         {
             string path = string.Format("Gesture/g{0:D2}", currGes.id);
             Debug.LogFormat("path:{0} ", path);
@@ -190,7 +190,7 @@ public class CameraInitHandler : MonoBehaviour
                 gesTextures.Add(path, texGes);
             }
         }
-        if (currEvent.id != -1)
+        if (currEvent.id > 0)
         {
             string path = string.Format("Gesture/e{0:D2}", currEvent.id);
             if (gesTextures.ContainsKey(path))
@@ -203,26 +203,26 @@ public class CameraInitHandler : MonoBehaviour
                 gesTextures.Add(path, texEv);
             }
         }
-
-        Debug.LogFormat("gesImg={0}, tesGest={1} , texEven={2}" , gesImg, texGes, texEv);
+        Debug.LogFormat("currGes={0}, currEvent={1}" , currGes.id, currEvent.id);
+        Debug.LogFormat("gesImg={0}, texGest={1} , texEven={2}" , gesImg, texGes, texEv);
 
         if (gesImg != null)
         {
-            if (currGes.id != -1)
+            if (currGes.id > 0)
             {
                 Debug.Log("gesImg on");
                 gesImg.sprite = texGes;
                 gesImg.gameObject.SetActive(true);
             }
 
-            if (currEvent.id != -1)
+            if (currEvent.id > 0)
             {
                 Debug.Log("gesImg on");
                 gesImg.sprite = texEv;
                 gesImg.gameObject.SetActive(true);
             }
 
-            if (currGes.id == -1 && currEvent.id == -1)
+            if (currGes.id <= 0 && currEvent.id <= 0)
             {
                 Debug.Log("gesImg off");
                 gesImg.gameObject.SetActive(false);
