@@ -27,7 +27,7 @@ public class LoadRGB : MonoBehaviour
         //API.xslam_set_rgb_source( 0 );
 
         // set to 720p
-        //API.xslam_set_rgb_resolution( 1 );
+        //API.xslam_set_rgb_resolution();
         newThread = new Thread(GetRGBFrame);
         newThread2 = new Thread(GetRGBFrame);
         //newThread.Start();
@@ -94,7 +94,7 @@ public class LoadRGB : MonoBehaviour
                     }
                 }
             }
-            Thread.Sleep(300);
+            Thread.Sleep(100);
             //yield return new WaitForSeconds(0.3f);
         }
     }
@@ -105,7 +105,7 @@ public class LoadRGB : MonoBehaviour
     	
     		int width = API.xslam_get_rgb_width();
     		int height = API.xslam_get_rgb_height();
-    		
+    		//Debug.Log("Get RGB texture " + width + "x" + height);
     		if( width > 0 && height > 0 ){
 
 				if( lastWidth != width || lastHeight != height ){
