@@ -33,32 +33,6 @@ public class LoadRGB : MonoBehaviour
         //newThread.Start();
     }
 
-    IEnumerator SlowUpdate()
-    {
-        while (true)
-        {
-            // 执行操作
-            try
-            {
-                if (API.xslam_get_rgb_image_RGBA(pixelPtr, tex.width, tex.height, ref rgbTimestamp))
-                {
-                    //Update the Texture2D with array updated in C++
-                    tex.SetPixels32(pixel32);
-                    tex.Apply();
-                }
-                else
-                {
-                    Debug.Log("Invalid texture");
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.LogException(e, this);
-            }
-            yield return new WaitForSeconds(0.3f);
-        }
-    }
-
     void GetRGBFrame()
     {
         while (true)
@@ -105,7 +79,7 @@ public class LoadRGB : MonoBehaviour
     	
     		int width = API.xslam_get_rgb_width();
     		int height = API.xslam_get_rgb_height();
-    		//Debug.Log("Get RGB texture " + width + "x" + height);
+    		Debug.Log("Create RGB texture " + width + "x" + height);
     		if( width > 0 && height > 0 ){
 
 				if( lastWidth != width || lastHeight != height ){
@@ -181,11 +155,6 @@ public class LoadRGB : MonoBehaviour
                 }
             }
         }
-    }
-
-    private void StartCoroutine(Func<IEnumerator> slowUpdate)
-    {
-        throw new NotImplementedException();
     }
 
     void OnApplicationQuit()

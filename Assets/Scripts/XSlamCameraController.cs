@@ -61,11 +61,12 @@ public class XSlamCameraController : MonoBehaviour
 
     void Awake()
     {
+        Debug.Log("XSlamCameraController.Awake()");
     }
 
     void Start()
     {
-        Debug.Log("Start");
+        Debug.Log("XSlamCameraController.Start()");
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
 	}
 
@@ -87,10 +88,10 @@ public class XSlamCameraController : MonoBehaviour
     
     void Update()
     {
-        if( Input.GetKeyDown(KeyCode.Escape) )
+        DetectWhichKeyDown();
+
+        if (Input.GetKey(KeyCode.Escape))
         {
-            Debug.Log( "Input.GetKeyDown KeyCode.Escape" );
-            OnApplicationPause(true);
             Application.Quit();
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
@@ -113,7 +114,8 @@ public class XSlamCameraController : MonoBehaviour
 
             AndroidJavaClass cls = new AndroidJavaClass("com.xvisio.unity.XVisioSDKDemo");
             int fd = cls.CallStatic<int>("getFd");
-            if( fd < 0 ){
+            if (fd < 0)
+            {
                 Debug.Log("Failed to get fd");
                 return;
             }
@@ -122,20 +124,30 @@ public class XSlamCameraController : MonoBehaviour
             m_fd = fd;
 
             //Must init gesture before call API.xslam_init_with_fd
-            try{
-                Debug.Log("init ges");
-                XvGesture.InitGes(fd);
-            }catch (Exception e) {
-                print("error: " + e);
+            if (enableGesture)
+            {
+                try
+                {
+                    Debug.Log("init ges");
+                    XvGesture.InitGes(fd);
+                }
+                catch (Exception e)
+                {
+                    print("error: " + e);
+                }
             }
-			
-            Debug.Log("init xvsdk");
-            //bool ok = API.xslam_init_with_fd( m_fd );
-            bool ok = API.xslam_init_components_with_fd( m_fd,
-                    (int)( API.Component.TOF | API.Component.RGB |
-                        API.Component.VSC ) );
-            if( !ok ){
-                Debug.Log("Failed to init xvsdk with fd=" + m_fd );
+
+            Debug.Log("+init xvsdk");
+            // bool ok = API.xslam_init_with_fd( m_fd );
+            bool ok = API.xslam_init_components_with_fd(m_fd,
+                    (int)(API.Component.TOF | API.Component.RGB |
+                        API.Component.VSC));
+
+            Debug.Log("-init xvsdk");
+
+            if (!ok)
+            {
+                Debug.Log("Failed to init xvsdk with fd=" + m_fd);
                 return;
             }
 #else
@@ -176,24 +188,31 @@ public class XSlamCameraController : MonoBehaviour
 
             // Stop streams due to firmware not stable
             Debug.Log("stop streams");
-            API.xslam_stop_rgb_stream();
-            API.xslam_stop_tof_stream();
-            API.xslam_stop_stereo_stream();
-            API.xslam_stop_speaker_stream();
+
+            if (enableRGBFrame)
+                API.xslam_stop_rgb_stream();
+
+            if (enableTOFFrame)
+                API.xslam_stop_tof_stream();
 
             // Start image streams
             Debug.Log("start streams");
-            API.xslam_start_rgb_stream();
-            API.xslam_start_tof_stream();
-            API.xslam_start_stereo_stream();
+
+            if (enableRGBFrame)
+                API.xslam_start_rgb_stream();
+
+            if (enableTOFFrame)
+                API.xslam_start_tof_stream();
 
             Debug.LogFormat("set slam type: {0}", slamMode == SlamModes.Device ? "edge" : "mixed");
-            API.xslam_slam_type( slamMode == SlamModes.Device ? 0 : 1 );
+            API.xslam_slam_type(slamMode == SlamModes.Device ? 0 : 1);
 
-            Debug.Log("init vuforia");
-            UVCManager.InitVuforia();
+            if (enableVuforia)
+            {
+                Debug.Log("init vuforia");
+                UVCManager.InitVuforia();
+            }
         }
-
 
         /*
         Matrix4x4 mt = Matrix4x4.identity;
@@ -220,23 +239,25 @@ public class XSlamCameraController : MonoBehaviour
         */
     }
 
-    void OnApplicationPause(bool pauseStatus)
+    void OnApplicationQuit()
     {
-        Debug.Log( "OnApplicationPause " + pauseStatus );
-        if (pauseStatus)
-        {
+        
+        if (enableRGBFrame)
             API.xslam_stop_rgb_stream();
-            API.xslam_stop_tof_stream();
-            API.xslam_stop_stereo_stream();
 
-            API.xslam_stop_play();
-            API.xslam_unset_mic_callback();
-        }
-        else
+        if (enableTOFFrame)
+            API.xslam_stop_tof_stream();
+    }
+
+    void DetectWhichKeyDown()
+    {
+        foreach (KeyCode vKey in System.Enum.GetValues(typeof(KeyCode)))
         {
-            API.xslam_start_rgb_stream();
-            API.xslam_start_tof_stream();
-            API.xslam_start_stereo_stream();
+            if (Input.GetKeyDown(vKey))
+            {
+                string value = " ======== " + vKey + " is pressed!";
+                Debug.Log(value);
+            }
         }
     }
 

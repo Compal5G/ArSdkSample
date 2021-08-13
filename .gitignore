@@ -57,8 +57,11 @@ Thumbs.db
 /ProjectSettings/
 
 # github
+*.unitypackage
 */SVR/
 */SVR.meta
+*/Scenes/Model3D/
+*/Scenes/Model3D.meta
 */Plugins/
 */Plugins.meta
 */Vuforia/
