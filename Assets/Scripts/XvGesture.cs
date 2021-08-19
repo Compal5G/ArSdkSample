@@ -22,9 +22,60 @@ public struct EventInfo
     public float y;
     public int count;
 };
+enum GestureID
+{
+    GES_PALM_BACK = 2,
+    GES_SIX_BACK = 5,
+    GES_TWO_BACK = 6,
+    GES_OK_BACK = 8,
+    GES_THUMP_UP_FRONT = 12,
+    GES_ROCK_FRONT = 16,
+    GES_FIST_FRONT = 60,
+    GES_PALM_DOWN = 70
+};
+
+enum EventID
+{
+    EVE_DRAG_UP = 11,
+    EVE_DRAG_DOWN = 12,
+    EVE_DRAG_LEFT = 13,
+    EVE_DRAG_RIGHT = 14,
+    EVE_DOUBLE_PINCH = 15
+};
 
 public class XvGesture : MonoBehaviour
 {
+    [Header("Gesture Trust Criteria")]
+    public int checkTime = 5;
+
+    [SerializeField]
+    private bool enable_Gesture_Plam_Back = true;
+    [SerializeField]
+    private bool enable_Gesture_Six_Back = true;
+    [SerializeField]
+    private bool enable_Gesture_Two_Back = true;
+    [SerializeField]
+    private bool enable_Gesture_OK_Back = true;
+    [SerializeField]
+    private bool enable_Gesture_Thumb_Up_Front = true;
+    [SerializeField]
+    private bool enable_Gesture_Rock_Front = true;
+    [SerializeField]
+    private bool enable_Gesture_Fist_Front = true;
+    [SerializeField]
+    private bool enable_Gesture_Plum_Down = true;
+    [SerializeField]
+    private bool enable_Event_Drag_Up = true;
+    [SerializeField]
+    private bool enable_Event_Drag_Down = true;
+    [SerializeField]
+    private bool enable_Event_Drag_Right = true;
+    [SerializeField]
+    private bool enable_Event_Drag_Left = true;
+    [SerializeField]
+    private bool enable_Event_Double_Pinch = false;
+
+
     private static XvGesture firstInstance;
     private AndroidJavaObject ges = null;
     private Queue q = new Queue(); // event use queue to avoid miss
@@ -73,7 +124,8 @@ public class XvGesture : MonoBehaviour
                 long height = xvInfo.Get<long>("height");
                 if (handInfos != null) {
                     int m = arrayClass.CallStatic<int>("getLength", handInfos);
-                    //Debug.Log("handInfos size:" + n );
+                    Debug.Log("handInfos width:" + width );
+                    Debug.Log("handInfos height:" + height );
                     for (int j = 0; j < m; j++) {
     //class HandInfo:
     //    public static final int LR_LEFT = 240;
@@ -173,6 +225,70 @@ public class XvGesture : MonoBehaviour
                         ev.x = x1 * width;
                         ev.y = y1 * height;
                         ev.count = 0;
+
+                        //Filter Unchecked Gesture and Event
+                        switch (tmpGes.id) {
+                            case (int)GestureID.GES_FIST_FRONT:
+                                if(!enable_Gesture_Fist_Front) tmpGes.id = -1;
+                                break;
+
+                            case (int)GestureID.GES_OK_BACK:
+                                if(!enable_Gesture_OK_Back) tmpGes.id = -1;
+                                break;
+
+                            case (int)GestureID.GES_PALM_BACK:
+                                if(!enable_Gesture_Plam_Back) tmpGes.id = -1;
+                                break;
+
+                            case (int)GestureID.GES_PALM_DOWN:
+                                if(!enable_Gesture_Plum_Down) tmpGes.id = -1;
+                                break;
+
+                            case (int)GestureID.GES_ROCK_FRONT:
+                                if(!enable_Gesture_Rock_Front) tmpGes.id = -1;
+                                break;
+
+                            case (int)GestureID.GES_SIX_BACK:
+                                if(!enable_Gesture_Six_Back) tmpGes.id = -1;
+                                break;
+
+                            case (int)GestureID.GES_THUMP_UP_FRONT:
+                                if(!enable_Gesture_Thumb_Up_Front) tmpGes.id = -1;
+                                break;
+
+                            case (int)GestureID.GES_TWO_BACK:
+                                if(!enable_Gesture_Two_Back) tmpGes.id = -1;
+                                break;
+
+                            default:
+                                break;
+                        }
+
+                        switch (ev.id) {
+                            case (int)EventID.EVE_DOUBLE_PINCH:
+                                if(!enable_Event_Double_Pinch) ev.id = -1;
+                                break;
+
+                            case (int)EventID.EVE_DRAG_DOWN:
+                                if(!enable_Event_Drag_Down) ev.id = -1;
+                                break;
+
+                            case (int)EventID.EVE_DRAG_LEFT:
+                                if(!enable_Event_Drag_Left) ev.id = -1;
+                                break;
+
+                            case (int)EventID.EVE_DRAG_RIGHT:
+                                if(!enable_Event_Drag_Right) ev.id = -1;
+                                break;
+
+                            case (int)EventID.EVE_DRAG_UP:
+                                if(!enable_Event_Drag_Up) ev.id = -1;
+                                break;
+                            
+                            default:
+                                break;
+                        }
+
                         // There are static gestures in usens event
                         if (ev.id == 20 || ev.id == 10) {
                             tmpGes.id = ev.id + 50;
@@ -185,7 +301,7 @@ public class XvGesture : MonoBehaviour
                                 lastEven = ev;
                                 lastEven.count++;
                             }
-                            if(lastEven.count >= 3) {
+                            if(lastEven.count >= checkTime) {
                                 q.Enqueue(ev);
                             }
                         }
@@ -202,7 +318,7 @@ public class XvGesture : MonoBehaviour
                 lastGes = tmpGes;
                 lastGes.count++;
             }
-            if(lastGes.count >= 3) {  //count is greater than 3, the gesutre is credible.
+            if(lastGes.count >= checkTime) {  //count is greater than checkTime, the gesutre is credible.
                 noGestureCount = 0;  //clean the count of noGesture case.
                 currGes = lastGes;
             }
@@ -211,7 +327,7 @@ public class XvGesture : MonoBehaviour
             if(gesStay < 1.0) {
                 gesStay += Time.fixedDeltaTime;
             } else {
-                if(noGestureCount >= 3) {
+                if(noGestureCount >= checkTime) {
                     currGes = tmpGes;
                 }
             }

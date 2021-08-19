@@ -52,7 +52,7 @@ public class XSlamCameraController : MonoBehaviour
     public bool enableGesture = true;
     public bool enableRGBFrame = true;
     public bool enableTOFFrame = true;
-    public bool enableVuforia = false;
+    public bool enableVuforia = true;
 
     void OnEnable()
     {
@@ -187,13 +187,13 @@ public class XSlamCameraController : MonoBehaviour
             */
 
             // Stop streams due to firmware not stable
-            Debug.Log("stop streams");
+            // Debug.Log("stop streams");
 
-            if (enableRGBFrame)
-                API.xslam_stop_rgb_stream();
+            // if (enableRGBFrame)
+            //     API.xslam_stop_rgb_stream();
 
-            if (enableTOFFrame)
-                API.xslam_stop_tof_stream();
+            // if (enableTOFFrame)
+            //     API.xslam_stop_tof_stream();
 
             // Start image streams
             Debug.Log("start streams");
@@ -241,7 +241,6 @@ public class XSlamCameraController : MonoBehaviour
 
     void OnApplicationQuit()
     {
-        
         if (enableRGBFrame)
             API.xslam_stop_rgb_stream();
 

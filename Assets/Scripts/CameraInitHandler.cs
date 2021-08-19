@@ -203,8 +203,8 @@ public class CameraInitHandler : MonoBehaviour
                 gesTextures.Add(path, texEv);
             }
         }
-        Debug.LogFormat("currGes={0}, currEvent={1}" , currGes.id, currEvent.id);
-        Debug.LogFormat("gesImg={0}, texGest={1} , texEven={2}" , gesImg, texGes, texEv);
+        //Debug.LogFormat("currGes={0}, currEvent={1}" , currGes.id, currEvent.id);
+        //Debug.LogFormat("gesImg={0}, texGest={1} , texEven={2}" , gesImg, texGes, texEv);
 
         if (gesImg != null)
         {

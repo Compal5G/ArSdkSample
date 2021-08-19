@@ -21,21 +21,21 @@ public class LoadRGB : MonoBehaviour
     private Boolean isTextureReady = false;
     private Object thisLock = new Object();
 
+    volatile bool keepThreadAlive = true;
+
     void Start()
     {
         // use uvc rgb
         //API.xslam_set_rgb_source( 0 );
 
         // set to 720p
-        //API.xslam_set_rgb_resolution();
         newThread = new Thread(GetRGBFrame);
         newThread2 = new Thread(GetRGBFrame);
-        //newThread.Start();
     }
 
     void GetRGBFrame()
     {
-        while (true)
+        while (keepThreadAlive)
         {
             if (API.xslam_ready())
             {
@@ -53,10 +53,10 @@ public class LoadRGB : MonoBehaviour
                                 //tex.SetPixels32(pixel32);
                                 //tex.Apply();
                             }
-                            else
-                            {
-                                Debug.Log("Invalid texture");
-                            }
+                            // else
+                            // {
+                            //     Debug.Log("Invalid texture");
+                            // }
                         }
                         catch (Exception e)
                         {
@@ -69,7 +69,6 @@ public class LoadRGB : MonoBehaviour
                 }
             }
             Thread.Sleep(100);
-            //yield return new WaitForSeconds(0.3f);
         }
     }
     
@@ -81,8 +80,9 @@ public class LoadRGB : MonoBehaviour
     		int height = API.xslam_get_rgb_height();
     		Debug.Log("Create RGB texture " + width + "x" + height);
     		if( width > 0 && height > 0 ){
-
 				if( lastWidth != width || lastHeight != height ){
+                    keepThreadAlive = false;
+                    API.xslam_set_rgb_resolution(1);
                     try{
                         double r = 0.25;
                         if (width < 1280 && height < 720) {
@@ -111,21 +111,17 @@ public class LoadRGB : MonoBehaviour
 
                     lastWidth = width;
                     lastHeight = height;
-                    isTextureReady = true;
+
+                    if(!keepThreadAlive) {
+                        keepThreadAlive = true;
+                        newThread.Start();
+                        newThread2.Start();
+                    }
                 }
 
-                if (isTextureReady)
-                {
-                    newThread.Start();
-                    newThread2.Start();
-                    //newThread3.Start();
-                    //StartCoroutine(GetRGBFrame);
-                    isTextureReady = false;
-                }
-
-                //if (GameObject.Find("TogglePanel").GetComponent<StreamToggle>().RgbOn())
-                //if (true)
-                //{
+                // if (GameObject.Find("TogglePanel").GetComponent<StreamToggle>().RgbOn())
+                // //if (true)
+                // {
                 //    try
                 //    {
                 //        if (API.xslam_get_rgb_image_RGBA(pixelPtr, tex.width, tex.height, ref rgbTimestamp))
@@ -145,7 +141,7 @@ public class LoadRGB : MonoBehaviour
                 //        return;
                 //    }
 
-                //}
+                // }
                 lock (thisLock)
                 {
                    //Debug.Log("apply B");
