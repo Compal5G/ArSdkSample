@@ -95,7 +95,7 @@ public class LoadRGB : MonoBehaviour, SvrManager.SvrEventListener
     	
     		int width = API.xslam_get_rgb_width();
     		int height = API.xslam_get_rgb_height();
-    		Debug.Log("Create RGB texture " + width + "x" + height);
+    		//Debug.Log("Create RGB texture " + width + "x" + height);
     		if( width > 0 && height > 0 ){
 				if( lastWidth != width || lastHeight != height ){
                     keepThreadAlive = false;

@@ -230,7 +230,6 @@ public class XvGesture : MonoBehaviour
                         ev.x = x1 * width;
                         ev.y = y1 * height;
                         ev.count = 0;
-                        Debug.Log("J : Gesture = " + id);
                         //Filter Unchecked Gesture and Event
                         switch (tmpGes.id) {
                             case (int)GestureID.GES_FIST_FRONT:
@@ -305,9 +304,7 @@ public class XvGesture : MonoBehaviour
                             default:
                                 break;
                         }
-                        Debug.Log("Event before q = " + ev.id);
                         // There are static gestures in usens event
-
                         if (ev.id == (int)EventID.GES_FIST_FRONT || ev.id == (int)EventID.GES_PALM_DOWN) {
                             tmpGes.id = ev.id + 50;
                             tmpGes.dis_diff_ = ev.dis_diff_;
