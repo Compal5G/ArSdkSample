@@ -7,7 +7,7 @@ using System.Threading;
 using Object = UnityEngine.Object;
 using System.Collections;
 
-public class LoadRGB : MonoBehaviour
+public class LoadRGB : MonoBehaviour, SvrManager.SvrEventListener
 {
     private Texture2D tex = null;
     private Color32[] pixel32;
@@ -22,15 +22,32 @@ public class LoadRGB : MonoBehaviour
     private Object thisLock = new Object();
 
     volatile bool keepThreadAlive = true;
+    private bool isSVRReady = false;
 
     void Start()
     {
         // use uvc rgb
         //API.xslam_set_rgb_source( 0 );
-
+        //Register for SvrEvents
+        SvrManager.Instance.AddEventListener (this);
         // set to 720p
         newThread = new Thread(GetRGBFrame);
         newThread2 = new Thread(GetRGBFrame);
+    }
+
+    /// <summary>
+    /// Raises the svr event event.
+    /// </summary>
+    /// <param name="ev">Ev.</param>
+    //---------------------------------------------------------------------------------------------
+    public void OnSvrEvent(SvrManager.SvrEvent ev)
+    {
+        switch (ev.eventType)
+        {
+            case SvrManager.svrEventType.kEventVrModeStarted:
+                isSVRReady = true;
+                break;
+        }
     }
 
     void GetRGBFrame()
@@ -39,9 +56,9 @@ public class LoadRGB : MonoBehaviour
         {
             if (API.xslam_ready())
             {
-                if (GameObject.Find("TogglePanel").GetComponent<StreamToggle>().RgbOn())
+                //API.xslam_set_rgb_resolution(1);
+                if (isSVRReady)
                 {
-                   
                     lock (thisLock)
                     {
                         //Debug.Log("thread B id " + Thread.CurrentThread.ManagedThreadId);
@@ -82,6 +99,7 @@ public class LoadRGB : MonoBehaviour
     		if( width > 0 && height > 0 ){
 				if( lastWidth != width || lastHeight != height ){
                     keepThreadAlive = false;
+                    Debug.Log("xslam_set_rgb_resolution");
                     API.xslam_set_rgb_resolution(1);
                     try{
                         double r = 0.25;

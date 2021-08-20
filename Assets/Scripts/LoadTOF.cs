@@ -4,14 +4,30 @@ using UnityEngine;
 using System;
 using System.Runtime.InteropServices;
 
-public class LoadTOF : MonoBehaviour
+public class LoadTOF : MonoBehaviour, SvrManager.SvrEventListener
 {
     private Texture2D tex = null;
+    private bool isSVRReady = false;
 	    
     // Start is called before the first frame update
     void Start()
     {
+        SvrManager.Instance.AddEventListener (this);
+    }
 
+    /// <summary>
+    /// Raises the svr event event.
+    /// </summary>
+    /// <param name="ev">Ev.</param>
+    //---------------------------------------------------------------------------------------------
+    public void OnSvrEvent(SvrManager.SvrEvent ev)
+    {
+        switch (ev.eventType)
+        {
+            case SvrManager.svrEventType.kEventVrModeStarted:
+                isSVRReady = true;
+                break;
+        }
     }
 
     private Color32[] pixel32;
@@ -41,7 +57,7 @@ public class LoadTOF : MonoBehaviour
         			GetComponent<Renderer>().material.mainTexture = tex;
 				}
 				
-                if(GameObject.Find("TogglePanel").GetComponent<StreamToggle>().TofOn()) {
+                if(isSVRReady) {
                     if( API.xslam_get_tof_image(pixelPtr, tex.width, tex.height) ){
                         //Update the Texture2D with array updated in C++
                         tex.SetPixels32(pixel32);

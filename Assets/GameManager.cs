@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviour, SvrManager.SvrEventListener
 {
     public Text resultText = null;
     public Text triggerWords = null;
@@ -15,16 +15,41 @@ public class GameManager : MonoBehaviour
 
     // Start is called before the first frame update
     void Start() {
+        //Register for SvrEvents
+        SvrManager.Instance.AddEventListener (this);
         // register callback from java
-        SpeechAPI.onSpeechResult += onSpeechResult;
-        SpeechAPI.onError += onError;
-        SpeechAPI.onLoadLanguage += onLoadLanguage;
-        SpeechAPI.onSupportTriggerWords += onSupportTriggerWords;
+        // SpeechAPI.onSpeechResult += onSpeechResult;
+        // SpeechAPI.onError += onError;
+        // SpeechAPI.onLoadLanguage += onLoadLanguage;
+        // SpeechAPI.onSupportTriggerWords += onSupportTriggerWords;
 
         // get tirggere words list
-        SpeechAPI.stopSpeech(); // alwayse stop recognizer before switch language
-        SpeechAPI.switchLanguage("1"); // set chinese as default
-        SpeechAPI.getTriggerWords(); // after switch language, we cound get trogger word list
+        // SpeechAPI.stopSpeech(); // alwayse stop recognizer before switch language
+        // SpeechAPI.switchLanguage("1"); // set chinese as default
+        // SpeechAPI.getTriggerWords(); // after switch language, we cound get trogger word list
+    }
+
+        /// <summary>
+    /// Raises the svr event event.
+    /// </summary>
+    /// <param name="ev">Ev.</param>
+    //---------------------------------------------------------------------------------------------
+    public void OnSvrEvent(SvrManager.SvrEvent ev)
+    {
+        switch (ev.eventType)
+        {
+            case SvrManager.svrEventType.kEventVrModeStarted:
+                // register callback from java
+                SpeechAPI.onSpeechResult += onSpeechResult;
+                SpeechAPI.onError += onError;
+                SpeechAPI.onLoadLanguage += onLoadLanguage;
+                SpeechAPI.onSupportTriggerWords += onSupportTriggerWords;
+                // get tirggere words list
+                SpeechAPI.stopSpeech(); // alwayse stop recognizer before switch language
+                SpeechAPI.switchLanguage("1"); // set chinese as default
+                SpeechAPI.getTriggerWords(); // after switch language, we cound get trogger word list
+                break;
+        }
     }
 
     // Update is called once per frame
