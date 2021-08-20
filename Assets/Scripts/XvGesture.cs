@@ -24,6 +24,7 @@ public struct EventInfo
 };
 enum GestureID
 {
+    GES_OTHER = 0,
     GES_PALM_BACK = 2,
     GES_SIX_BACK = 5,
     GES_TWO_BACK = 6,
@@ -40,7 +41,11 @@ enum EventID
     EVE_DRAG_DOWN = 12,
     EVE_DRAG_LEFT = 13,
     EVE_DRAG_RIGHT = 14,
-    EVE_DOUBLE_PINCH = 15
+    EVE_DOUBLE_PINCH = 15,
+
+    GES_FIST_FRONT = 10,
+    GES_PALM_DOWN = 20,
+    EVE_NODEF = 21
 };
 
 public class XvGesture : MonoBehaviour
@@ -225,7 +230,7 @@ public class XvGesture : MonoBehaviour
                         ev.x = x1 * width;
                         ev.y = y1 * height;
                         ev.count = 0;
-
+                        Debug.Log("J : Gesture = " + id);
                         //Filter Unchecked Gesture and Event
                         switch (tmpGes.id) {
                             case (int)GestureID.GES_FIST_FRONT:
@@ -259,7 +264,11 @@ public class XvGesture : MonoBehaviour
                             case (int)GestureID.GES_TWO_BACK:
                                 if(!enable_Gesture_Two_Back) tmpGes.id = -1;
                                 break;
-
+                            
+                            case (int)GestureID.GES_OTHER:
+                                tmpGes.id = -1;
+                                break;
+                                
                             default:
                                 break;
                         }
@@ -284,13 +293,22 @@ public class XvGesture : MonoBehaviour
                             case (int)EventID.EVE_DRAG_UP:
                                 if(!enable_Event_Drag_Up) ev.id = -1;
                                 break;
+
+                            case (int)EventID.GES_FIST_FRONT:
+                                if(!enable_Gesture_Fist_Front) ev.id = (int)EventID.EVE_NODEF;
+                                break;
+
+                            case (int)EventID.GES_PALM_DOWN:
+                                if(!enable_Gesture_Plum_Down) ev.id = (int)EventID.EVE_NODEF;
+                                break;
                             
                             default:
                                 break;
                         }
-
+                        Debug.Log("Event before q = " + ev.id);
                         // There are static gestures in usens event
-                        if (ev.id == 20 || ev.id == 10) {
+
+                        if (ev.id == (int)EventID.GES_FIST_FRONT || ev.id == (int)EventID.GES_PALM_DOWN) {
                             tmpGes.id = ev.id + 50;
                             tmpGes.dis_diff_ = ev.dis_diff_;
                         } else {
@@ -301,7 +319,7 @@ public class XvGesture : MonoBehaviour
                                 lastEven = ev;
                                 lastEven.count++;
                             }
-                            if(lastEven.count >= checkTime) {
+                            if(lastEven.id != (int)EventID.EVE_NODEF && lastEven.count >= checkTime) {
                                 q.Enqueue(ev);
                             }
                         }

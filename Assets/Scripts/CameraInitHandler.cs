@@ -203,7 +203,7 @@ public class CameraInitHandler : MonoBehaviour
                 gesTextures.Add(path, texEv);
             }
         }
-        //Debug.LogFormat("currGes={0}, currEvent={1}" , currGes.id, currEvent.id);
+        Debug.LogFormat("currGes={0}, currEvent={1}" , currGes.id, currEvent.id);
         //Debug.LogFormat("gesImg={0}, texGest={1} , texEven={2}" , gesImg, texGes, texEv);
 
         if (gesImg != null)
@@ -220,9 +220,12 @@ public class CameraInitHandler : MonoBehaviour
                 Debug.Log("gesImg on");
                 gesImg.sprite = texEv;
                 gesImg.gameObject.SetActive(true);
-            }
-
-            if (currGes.id <= 0 && currEvent.id <= 0)
+            } else if (currGes.id > 0)
+            {
+                Debug.Log("gesImg on");
+                gesImg.sprite = texGes;
+                gesImg.gameObject.SetActive(true);
+            } else
             {
                 Debug.Log("gesImg off");
                 gesImg.gameObject.SetActive(false);
