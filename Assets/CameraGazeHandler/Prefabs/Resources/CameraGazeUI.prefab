@@ -265,7 +265,7 @@ Canvas:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7681422698114010286}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_RenderMode: 1
   m_Camera: {fileID: 0}
@@ -330,6 +330,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91403c776c5781a4b8c802ba1db11987, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pointMask: {fileID: 7681422697756639428}
-  point: {fileID: 7681422696740697936}
-  circleFill: {fileID: 7681422697351916806}
+  pointMask: {fileID: 0}
+  point: {fileID: 0}
+  circleFill: {fileID: 0}
