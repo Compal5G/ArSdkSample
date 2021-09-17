@@ -5,7 +5,6 @@ using System;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Object = UnityEngine.Object;
-using System.Collections;
 
 public class LoadRGB : MonoBehaviour, SvrManager.SvrEventListener
 {
