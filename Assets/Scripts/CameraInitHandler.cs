@@ -47,7 +47,8 @@ public class CameraInitHandler : MonoBehaviour
     public enum CameraThirdPartyType
     {
         QualcommSVR,
-        Xvisio
+        Xvisio,
+        OnlyQualcommSVR
     }
 
     void Awake()
@@ -99,35 +100,38 @@ public class CameraInitHandler : MonoBehaviour
             }
         }
 
-        if (xvisioCameraControl.enableVuforia)
-        {
-            VuforiaARController.Instance.RegisterVuforiaInitializedCallback(OnVuforiaInitialized);
-            VuforiaARController.Instance.RegisterVuforiaStartedCallback(OnVuforiaStarted);
-        }
+        if(firstInitCamera != CameraThirdPartyType.OnlyQualcommSVR) {
+            if (xvisioCameraControl.enableVuforia)
+            {
+                VuforiaARController.Instance.RegisterVuforiaInitializedCallback(OnVuforiaInitialized);
+                VuforiaARController.Instance.RegisterVuforiaStartedCallback(OnVuforiaStarted);
+            }
 
-        currEvent.id = -1;
-        currEventTime = DateTime.UtcNow;
+            
+
+            currEvent.id = -1;
+            currEventTime = DateTime.UtcNow;
+
+            Debug.Log("gesImg=" + gesImg);
+            if (gesImg != null)
+            {
+                gesImg.gameObject.SetActive(false);
+                gesImg.sprite = null;
+            }
+
+            //+++
+            // QVR is not ready, so we dislplay black screen here.
+            // UI/UX: display a customized loading page here.
+            // GameObject mainCameraGo = GameObject.FindWithTag("MainCamera");
+            // if (mainCameraGo)
+            // {
+            //     mainCameraGo.SetActive(false);
+            //     Debug.Log("Disabling Camera with MainCamera tag");
+            // }
+            // GL.Clear(false, true, Color.black);
+            //---
+        }
         InitGazeEvent();
-
-        Debug.Log("gesImg=" + gesImg);
-        if (gesImg != null)
-        {
-            gesImg.gameObject.SetActive(false);
-            gesImg.sprite = null;
-        }
-
-        //+++
-        // QVR is not ready, so we dislplay black screen here.
-        // UI/UX: display a customized loading page here.
-        // GameObject mainCameraGo = GameObject.FindWithTag("MainCamera");
-        // if (mainCameraGo)
-        // {
-        //     mainCameraGo.SetActive(false);
-        //     Debug.Log("Disabling Camera with MainCamera tag");
-        // }
-        // GL.Clear(false, true, Color.black);
-        //---
-
         switch (firstInitCamera)
         {
             case CameraThirdPartyType.QualcommSVR:
@@ -140,6 +144,10 @@ public class CameraInitHandler : MonoBehaviour
             case CameraThirdPartyType.Xvisio:
                 XvisioInit(); // May casue QVR restart ! [qvrservice_main: Received signal 2], if it did cause QVR restart, we must wait here unitil QVR is ready.
                 //yield return new WaitForSeconds(1.5f); // so we wait here for a while before do QVR init(). May need to increase waiting time that depends on system loading on that time.
+                QualcommInit();
+                MoveXvisioCameraToQualcommSVRCamera();
+                break;
+            case CameraThirdPartyType.OnlyQualcommSVR:
                 QualcommInit();
                 MoveXvisioCameraToQualcommSVRCamera();
                 break;
@@ -159,7 +167,7 @@ public class CameraInitHandler : MonoBehaviour
     {
         if (!XvGesture.Ready())
         {
-            Debug.Log("XvGesture is not ready!");
+            //Debug.Log("XvGesture is not ready!");
             return;
         }
 
