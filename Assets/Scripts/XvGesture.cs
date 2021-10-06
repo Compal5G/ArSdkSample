@@ -110,127 +110,149 @@ public class XvGesture : MonoBehaviour
             return;
         }
 
-        GestureInfo tmpGes;
-        tmpGes.id = -1;
+        //宣告一組手勢所需資訊 並定義初始值於每一update
+        GestureInfo tmpGes;  
+        tmpGes.id = -1;       
         tmpGes.dis_diff_ = 0;
         tmpGes.x = 0.0f;
         tmpGes.y = 0.0f;
 	    tmpGes.count = 0;
 
+        //arrayClass = "java.lang.reflect.Array"
         AndroidJavaClass arrayClass  = new AndroidJavaClass("java.lang.reflect.Array");
+        //xvInfos = "getXvHandInfos"
         AndroidJavaObject xvInfos = ges.Call<AndroidJavaObject>("getXvHandInfos");
         if (xvInfos != null) {
+            //n = xvInfos的長度
             int n = arrayClass.CallStatic<int>("getLength", xvInfos);
-            for (int i = 0; i < n; i++) {
+            //遍歷
+            for (int i = 0; i < n; i++)
+            {
+                //xvInfo 遍歷的其中一個xvInfos的物件
                 AndroidJavaObject xvInfo = arrayClass.CallStatic<AndroidJavaObject>("get", xvInfos, i);
+                //這個物件的內容handInfos物件
                 AndroidJavaObject handInfos = xvInfo.Get<AndroidJavaObject>("handInfos");
+                //這個物件的內容timestamp物件
                 long timestamp = xvInfo.Get<long>("timestamp");
+                //這個物件的內容width物件
                 long width = xvInfo.Get<long>("width");
+                Debug.Log("handInfos width:" + width);
+                //這個物件的內容height物件
                 long height = xvInfo.Get<long>("height");
+                Debug.Log("handInfos height:" + height);
                 if (handInfos != null) {
+                    //m = handInfos的長度
                     int m = arrayClass.CallStatic<int>("getLength", handInfos);
-                    Debug.Log("handInfos width:" + width );
-                    Debug.Log("handInfos height:" + height );
                     for (int j = 0; j < m; j++) {
-    //class HandInfo:
-    //    public static final int LR_LEFT = 240;
-    //    public static final int LR_RIGHT = 15;
-    //    public static final int GES_OTHER = 0;
-    //    public static final int GES_FIST_BACK = 1;
-    //    public static final int GES_PALM_BACK = 2;
-    //    public static final int GES_THUMP_UP_BACK = 3;
-    //    public static final int GES_INDEX_BACK = 4;
-    //    public static final int GES_SIX_BACK = 5;
-    //    public static final int GES_YES_BACK = 6;
-    //    public static final int GES_ROCK_BACK = 7;
-    //    public static final int GES_OK_BACK = 8;
-    //    public static final int GES_GUN_BACK = 9;
-    //    public static final int GES_FIST_FRONT = 10;
-    //    public static final int GES_PALM_FRONT = 11;
-    //    public static final int GES_THUMP_UP_FRONT = 12;
-    //    public static final int GES_INDEX_FRONT = 13;
-    //    public static final int GES_SIX_FRONT = 14;
-    //    public static final int GES_YES_FRONT = 15;
-    //    public static final int GES_ROCK_FRONT = 16;
-    //    public static final int GES_OK_FRONT = 17;
-    //    public static final int GES_GUN_FRONT = 18;
-    //    public static final int GES_PALM_UP = 19;
-    //    public static final int GES_PALM_DOWN = 20;
-    //    public static final int GES_THREE_ROTATE_FRONT = 21;
-    //    public static final int GES_THREE_ROTATE_BACK = 22;
-    //    public static final int GES_LOVE_FRONT = 23;
-    //    public static final int GES_LOVE_BACK = 24;
-    //    public static final int GES_PINCH = 25;
-    //    public static final int GES_FOUR_FINGER_FRONT = 26;
-    //    public static final int GES_FOUR_FINGER_BACK = 27;
-    //    public static final int EVE_NODEFINE = -1;
-    //    public static final int EVE_PINCH = 10;
-    //    public static final int EVE_DRAG_UP = 11;
-    //    public static final int EVE_DRAG_DOWN = 12;
-    //    public static final int EVE_DRAG_LEFT = 13;
-    //    public static final int EVE_DRAG_RIGHT = 14;
-    //    public static final int EVE_DOUBLE_PINCH = 15;
-    //    public static final int EVE_START = 16;
-    //    public static final int EVE_END = 17;
-    //    public static final int EVE_MENU = 18;
-    //    public static final int EVE_CLOSE = 19;
-    //    public static final int EVE_PLAM_UP = 20;
-    //    public static final int EVE_NODEF = 21;
-    //    public static final int STUDY_EVE_ONE_FINGER = 9;
-    //    public static final int STUDY_EVE_TWO_FINGERS = 10;
-    //    public static final int STUDY_EVE_POINT_UP = 11;
-    //    public static final int STUDY_EVE_POINT_DOWN = 12;
-    //    public static final int STUDY_EVE_POINT_LEFT = 13;
-    //    public static final int STUDY_EVE_POINT_RIGHT = 14;
-    //    public static final int STUDY_EVE_PINCH_UP = 15;
-    //    public static final int STUDY_EVE_GRAB = 16;
-    //    public static final int STUDY_EVE_NODEF = 17;
-    //    public static final int STUDY_SLIDE_LEFT = 18;
-    //    public static final int STUDY_SLIDE_RIGHT = 19;
-    //    public static final int STUDY_SLIDE_UP = 20;
-    //    public static final int STUDY_SLIDE_DOWN = 21;
-    //    public static final int STUDY_TRACE_NODEF = 22;
-    //    public static final String[] GestureName = new String[]{"other", "fist back", "palm back", "thumb up back", "index back", "six back", "yes back", "rock back", "ok back", "gun back", "fist front", "palm front", "thumb up front", "index front", "six front", "yes front", "rock front", "ok front", "gun front", "palm up", "palm down", "three rotate front", "three rotate back", "love front", "love back", "pinch", "four finger front", "four finger back"};
-    //    public float prob_;
-    //    public float[] box_ = new float[4];
-    //    public float[] box_3d_ = new float[24];
-    //    public float[] box_pad_ = new float[4];
-    //    public int have_skeleton_;
-    //    public float[] skeleton_2d_ = new float[66];
-    //    public float[] skeleton_3d_position_ = new float[66];
-    //    public float[] skeleton_3d_orientation_ = new float[88];
-    //    public float[] skeleton_prob_ = new float[22];
-    //    public int lr_;
-    //    public int gesture_;
-    //    public int event_;
-    //    public int dis_diff_;
-    //    public int trace_;
-    //    public float deltax;
-    //    public float deltay;
-    //    public float deltaz;
-    //    public float deltar;
-    //    public int id;
-    //    public float[] orinted_box = new float[8];
-    //    public float[] skeleton_2d_raw_ = new float[66];
-
+                        {
+                            //class HandInfo:
+                            //    public static final int LR_LEFT = 240;
+                            //    public static final int LR_RIGHT = 15;
+                            //    public static final int GES_OTHER = 0;
+                            //    public static final int GES_FIST_BACK = 1;
+                            //    public static final int GES_PALM_BACK = 2;
+                            //    public static final int GES_THUMP_UP_BACK = 3;
+                            //    public static final int GES_INDEX_BACK = 4;
+                            //    public static final int GES_SIX_BACK = 5;
+                            //    public static final int GES_YES_BACK = 6;
+                            //    public static final int GES_ROCK_BACK = 7;
+                            //    public static final int GES_OK_BACK = 8;
+                            //    public static final int GES_GUN_BACK = 9;
+                            //    public static final int GES_FIST_FRONT = 10;
+                            //    public static final int GES_PALM_FRONT = 11;
+                            //    public static final int GES_THUMP_UP_FRONT = 12;
+                            //    public static final int GES_INDEX_FRONT = 13;
+                            //    public static final int GES_SIX_FRONT = 14;
+                            //    public static final int GES_YES_FRONT = 15;
+                            //    public static final int GES_ROCK_FRONT = 16;
+                            //    public static final int GES_OK_FRONT = 17;
+                            //    public static final int GES_GUN_FRONT = 18;
+                            //    public static final int GES_PALM_UP = 19;
+                            //    public static final int GES_PALM_DOWN = 20;
+                            //    public static final int GES_THREE_ROTATE_FRONT = 21;
+                            //    public static final int GES_THREE_ROTATE_BACK = 22;
+                            //    public static final int GES_LOVE_FRONT = 23;
+                            //    public static final int GES_LOVE_BACK = 24;
+                            //    public static final int GES_PINCH = 25;
+                            //    public static final int GES_FOUR_FINGER_FRONT = 26;
+                            //    public static final int GES_FOUR_FINGER_BACK = 27;
+                            //    public static final int EVE_NODEFINE = -1;
+                            //    public static final int EVE_PINCH = 10;
+                            //    public static final int EVE_DRAG_UP = 11;
+                            //    public static final int EVE_DRAG_DOWN = 12;
+                            //    public static final int EVE_DRAG_LEFT = 13;
+                            //    public static final int EVE_DRAG_RIGHT = 14;
+                            //    public static final int EVE_DOUBLE_PINCH = 15;
+                            //    public static final int EVE_START = 16;
+                            //    public static final int EVE_END = 17;
+                            //    public static final int EVE_MENU = 18;
+                            //    public static final int EVE_CLOSE = 19;
+                            //    public static final int EVE_PLAM_UP = 20;
+                            //    public static final int EVE_NODEF = 21;
+                            //    public static final int STUDY_EVE_ONE_FINGER = 9;
+                            //    public static final int STUDY_EVE_TWO_FINGERS = 10;
+                            //    public static final int STUDY_EVE_POINT_UP = 11;
+                            //    public static final int STUDY_EVE_POINT_DOWN = 12;
+                            //    public static final int STUDY_EVE_POINT_LEFT = 13;
+                            //    public static final int STUDY_EVE_POINT_RIGHT = 14;
+                            //    public static final int STUDY_EVE_PINCH_UP = 15;
+                            //    public static final int STUDY_EVE_GRAB = 16;
+                            //    public static final int STUDY_EVE_NODEF = 17;
+                            //    public static final int STUDY_SLIDE_LEFT = 18;
+                            //    public static final int STUDY_SLIDE_RIGHT = 19;
+                            //    public static final int STUDY_SLIDE_UP = 20;
+                            //    public static final int STUDY_SLIDE_DOWN = 21;
+                            //    public static final int STUDY_TRACE_NODEF = 22;
+                            //    public static final String[] GestureName = new String[]{"other", "fist back", "palm back", "thumb up back", "index back", "six back", "yes back", "rock back", "ok back", "gun back", "fist front", "palm front", "thumb up front", "index front", "six front", "yes front", "rock front", "ok front", "gun front", "palm up", "palm down", "three rotate front", "three rotate back", "love front", "love back", "pinch", "four finger front", "four finger back"};
+                            //    public float prob_;
+                            //    public float[] box_ = new float[4];
+                            //    public float[] box_3d_ = new float[24];
+                            //    public float[] box_pad_ = new float[4];
+                            //    public int have_skeleton_;
+                            //    public float[] skeleton_2d_ = new float[66];
+                            //    public float[] skeleton_3d_position_ = new float[66];
+                            //    public float[] skeleton_3d_orientation_ = new float[88];
+                            //    public float[] skeleton_prob_ = new float[22];
+                            //    public int lr_;
+                            //    public int gesture_;
+                            //    public int event_;
+                            //    public int dis_diff_;
+                            //    public int trace_;
+                            //    public float deltax;
+                            //    public float deltay;
+                            //    public float deltaz;
+                            //    public float deltar;
+                            //    public int id;
+                            //    public float[] orinted_box = new float[8];
+                            //    public float[] skeleton_2d_raw_ = new float[66];
+                        }
+                        //遍歷每一個手勢內部資訊
+                        //handInfo = 一個手勢內部資訊
                         AndroidJavaObject handInfo = arrayClass.CallStatic<AndroidJavaObject>("get", handInfos, j);
+                        //pos_2d = 2d資訊
                         AndroidJavaObject pos_2d = handInfo.Get<AndroidJavaObject>("skeleton_2d_");
+                        //get xy
                         float x1 = arrayClass.CallStatic<AndroidJavaObject>("get", pos_2d, 0).Call<float>("floatValue");
                         float y1 = arrayClass.CallStatic<AndroidJavaObject>("get", pos_2d, 1).Call<float>("floatValue");
 
+                        //get id 
                         int id = handInfo.Get<int>("gesture_");
                         tmpGes.id = id;
+                        //get dis_diff_
                         tmpGes.dis_diff_ = handInfo.Get<int>("dis_diff_");
+                        //get x ,y
                         tmpGes.x = x1 * width;
                         tmpGes.y = y1 * height;
 
+                        //宣告一ev
                         EventInfo ev;
                         ev.id = handInfo.Get<int>("event_");
                         ev.dis_diff_ = handInfo.Get<int>("dis_diff_");
                         ev.x = x1 * width;
                         ev.y = y1 * height;
                         ev.count = 0;
-                        //Filter Unchecked Gesture and Event
+
+                        //Filter Unchecked gesture
                         switch (tmpGes.id) {
                             case (int)GestureID.GES_FIST_FRONT:
                                 if(!enable_Gesture_Fist_Front) tmpGes.id = -1;
@@ -272,6 +294,7 @@ public class XvGesture : MonoBehaviour
                                 break;
                         }
 
+                        //Filter Unchecked Event
                         switch (ev.id) {
                             case (int)EventID.EVE_DOUBLE_PINCH:
                                 if(!enable_Event_Double_Pinch) ev.id = -1;
@@ -304,6 +327,7 @@ public class XvGesture : MonoBehaviour
                             default:
                                 break;
                         }
+
                         // There are static gestures in usens event
                         if (ev.id == (int)EventID.GES_FIST_FRONT || ev.id == (int)EventID.GES_PALM_DOWN) {
                             tmpGes.id = ev.id + 50;
@@ -323,39 +347,63 @@ public class XvGesture : MonoBehaviour
                     }
                 }
             }
+        //到下面這個括號是 if (xvInfos != null) 
         }
 
+        //如果tmpGes . id> 初始設定的0
         if (tmpGes.id > 0) {  //get gesture.
+            //停止計時器
             gesStay = 0;
-            if(lastGes.id ==  tmpGes.id) {  //make sure if the gesture can be trust.
+
+
+            //一開始就有宣告一個lastGes 如果lastGes = tmpGes = 重複
+            if (lastGes.id ==  tmpGes.id) {  //make sure if the gesture can be trust.
+                //lastGet計數器++
                 lastGes.count++;
-            } else {  // the new gesture.
+            } else
+            {  //如果lastGes = tmpGes = 不重複新手勢 ,the new gesture.
                 lastGes = tmpGes;
+                //lastGet計數器++
                 lastGes.count++;
             }
+
+            //重複超過五次
             if(lastGes.count >= checkTime) {  //count is greater than checkTime, the gesutre is credible.
+                //這沒找到歸0
                 noGestureCount = 0;  //clean the count of noGesture case.
+                //current gesture = Lastges
                 currGes = lastGes;
             }
-        } else { //detect no gesture.
+        }
+        //如果tmpGes . id <= 初始設定的0
+        else
+        { //detect no gesture.
+            //沒找到次數+1
             noGestureCount++;
+            //如果沒找到 然後 等待時間又<1
             if(gesStay < 1.0) {
+                //加上時間
                 gesStay += Time.fixedDeltaTime;
-            } else {
-                if(noGestureCount >= checkTime) {
+            }
+            //如果沒找到 然後 等待時間 >= 1
+            else
+            {
+                //如果沒找到 然後 等待時間 >= 1 然後沒找到次數 大於 5
+                if (noGestureCount >= checkTime) {
+                    //當前手勢 = 上次手勢
                     currGes = tmpGes;
                 }
             }
         }
     }
-
+    //app關掉記得呼叫aar關閉
     void OnApplicationQuit()
     {
         if (ges != null) {
             ges.Call("stop");
         }
     }
-
+    //XSlamCameraController會在某一時機InitGes
     public static void InitGes(int fd)
     {
 #if UNITY_ANDROID
@@ -378,6 +426,8 @@ public class XvGesture : MonoBehaviour
 #endif
     }
 
+
+    //不知道誰讓我ready
     public static bool Ready()
     {
         if (firstInstance != null) {
@@ -388,6 +438,7 @@ public class XvGesture : MonoBehaviour
     }
 
     // Start Gesture capture, must open RGB first
+    //StreamToggle會打開StartGes
     public static void StartGes()
     {
         if (firstInstance != null) {
@@ -398,6 +449,7 @@ public class XvGesture : MonoBehaviour
     }
 
     // Stop Gesture capture
+    //StreamToggle會叫StopGes
     public static void StopGes()
     {
         if (firstInstance != null) {
