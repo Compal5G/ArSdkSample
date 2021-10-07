@@ -8,7 +8,7 @@ using Object = UnityEngine.Object;
 
 public class LoadRGB : MonoBehaviour, SvrManager.SvrEventListener
 {
-    private Texture2D tex = null;
+    [HideInInspector] public  Texture2D tex = null;
     private Color32[] pixel32;
     private GCHandle pixelHandle;
     private IntPtr pixelPtr;    
