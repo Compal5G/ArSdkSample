@@ -122,7 +122,6 @@ public class XSlamCameraController : MonoBehaviour
             Debug.Log("got fd=" + fd);
 
             m_fd = fd;
-
             //Must init gesture before call API.xslam_init_with_fd
             if (enableGesture)
             {
@@ -197,7 +196,6 @@ public class XSlamCameraController : MonoBehaviour
 
             // Start image streams
             Debug.Log("start streams");
-
             if (enableRGBFrame)
                 API.xslam_start_rgb_stream();
 

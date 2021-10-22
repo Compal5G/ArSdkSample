@@ -44,6 +44,8 @@ public class LoadRGB : MonoBehaviour, SvrManager.SvrEventListener
         switch (ev.eventType)
         {
             case SvrManager.svrEventType.kEventVrModeStarted:
+                Debug.Log("xslam_set_rgb_resolution");
+                API.xslam_set_rgb_resolution(1);
                 isSVRReady = true;
                 break;
         }
@@ -98,8 +100,6 @@ public class LoadRGB : MonoBehaviour, SvrManager.SvrEventListener
     		if( width > 0 && height > 0 ){
 				if( lastWidth != width || lastHeight != height ){
                     keepThreadAlive = false;
-                    Debug.Log("xslam_set_rgb_resolution");
-                    API.xslam_set_rgb_resolution(1);
                     try{
                         double r = 0.25;
                         if (width < 1280 && height < 720) {
