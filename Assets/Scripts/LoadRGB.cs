@@ -86,7 +86,7 @@ public class LoadRGB : MonoBehaviour, SvrManager.SvrEventListener
                     }
                 }
             }
-            Thread.Sleep(100);
+            Thread.Sleep(65);
         }
     }
     
