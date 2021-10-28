@@ -27,10 +27,10 @@ public class CalibrationHomography : MonoBehaviour
     private float[] ColorCalibrationL = new float[9];
     private bool hasValue = false;
 
-    private Mat ColorR = new Mat(3, 3, CvType.CV_64FC1);
-    private Mat ColorL = new Mat(3, 3, CvType.CV_64FC1);
+    private Mat ColorR;
+    private Mat ColorL;
     private Mat inputMat;
-    private Mat outputMat = new Mat(1280, 720, CvType.CV_8UC4);
+    private Mat outputMat;
 
     [SerializeField]
     private Transform RGBPlaneR;
@@ -43,7 +43,9 @@ public class CalibrationHomography : MonoBehaviour
 
     void Start()
     {
-        
+        ColorR = new Mat(3, 3, CvType.CV_64FC1);
+        ColorL = new Mat(3, 3, CvType.CV_64FC1);
+        outputMat = new Mat(1280, 720, CvType.CV_8UC4);
         // use uvc rgb
         //API.xslam_set_rgb_source( 0 );
 
