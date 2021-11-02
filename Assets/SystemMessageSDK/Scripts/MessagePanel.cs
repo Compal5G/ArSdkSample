@@ -10,7 +10,7 @@ public class MessagePanel : MonoBehaviour, SvrManager.SvrEventListener
     private Vector3 _LocationNotification = new Vector3(0, 0.135f, 1);
     private Vector3 _LocationTitleNotification = new Vector3(0, 0.158f, 1);
     private Vector3 _LocationTextNotification = new Vector3(0, 0.128f, 1);
-    private Vector3 _LocationToast = new Vector3(0, -0.13f, 1);
+    private Vector3 _LocationToast = new Vector3(0, -0.04f, 1);
     private Vector3 _LocationGoneNotification = new Vector3(0, 135, 0);
     private Vector3 _LocationGoneToast = new Vector3(0, -130, 0);
 
@@ -104,7 +104,7 @@ public class MessagePanel : MonoBehaviour, SvrManager.SvrEventListener
         RectTransform bgTrans = bgObject.AddComponent<RectTransform>();
         bgTrans.transform.SetParent(this.transform);
         bgTrans.localScale = Vector3.one;
-        bgTrans.sizeDelta = new Vector2(550, 30);
+        bgTrans.sizeDelta = new Vector2(300, 80);
         bgTrans.localScale = new Vector3(0.001f, 0.001f, 0.001f);
         bgTrans.localPosition = _LocationGoneToast;
         _ToastImage = bgObject.AddComponent<Image>();
@@ -119,7 +119,7 @@ public class MessagePanel : MonoBehaviour, SvrManager.SvrEventListener
         RectTransform textTrans = textObject.AddComponent<RectTransform>();
         textTrans.transform.SetParent(this.transform);
         textTrans.localScale = Vector3.one;
-        textTrans.sizeDelta = new Vector2(550, 30);
+        textTrans.sizeDelta = new Vector2(300, 80);
         textTrans.localScale = new Vector3(0.001f, 0.001f, 0.001f);
         textTrans.localPosition = _LocationGoneToast;
         _ToastText = textObject.AddComponent<Text>();
