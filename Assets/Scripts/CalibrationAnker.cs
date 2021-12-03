@@ -1,19 +1,9 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 using System;
 using System.Runtime.InteropServices;
 
-using OpenCVForUnity.CoreModule;
-using OpenCVForUnity.ImgprocModule;
-using OpenCVForUnity.UnityUtils;
-using OpenCVForUnity.ImgcodecsModule;
 
-using OpenCVForUnity.Calib3dModule;
 using OpenCVForUnity.ArucoModule;
-
-using System.IO;
-using System.Text.RegularExpressions;
 using Apal_CalibrationCore;
 
 
@@ -32,17 +22,8 @@ public class CalibrationAnker : MonoBehaviour
     private bool hasValue = false;
     private Material mat;
 
-    private int alpha = 150;
-
-    private bool applyEstimationPose = true;
-    //public ArUcoDictionary dictionaryId = ArUcoDictionary.DICT_7X7_250;
-    //public Camera arCamera;
-    //public float markerLength = 0.161f;
-    private bool showRejectedCorners = false;
     [SerializeField]
     private Transform MarkQuad;
-    //[SerializeField]
-    //private Transform[] ARGameObj;
 
     int m_iClickCount = 0;
     bool m_bClicked = false;
@@ -69,52 +50,6 @@ public class CalibrationAnker : MonoBehaviour
         DICT_7X7_250 = Aruco.DICT_7X7_250,
         DICT_7X7_1000 = Aruco.DICT_7X7_1000,
         DICT_ARUCO_ORIGINAL = Aruco.DICT_ARUCO_ORIGINAL,
-    }
-
-    void Start()
-    {
-        //var qx = Quaternion.AngleAxis(-90, Vector3.right);
-        //var qy = Quaternion.AngleAxis(180, Vector3.up);
-        //var qz = Quaternion.AngleAxis(180, Vector3.forward);
-        //qxyz = qx * qy * qz;
-        //
-        //for (int i = 0; i < ARGameObj.Length; i++)
-        //{
-        //    if (ARGameObj[i])
-        //    {
-        //        ARGameObj[i].localScale = Vector3.zero;
-        //    }
-        //}
-
-        // use uvc rgb
-        //API.xslam_set_rgb_source( 0 );
-
-        // set to 720p
-        //API.xslam_set_rgb_resolution( 1 );
-    }
-    //對相機取得的圖片進行2D Homography轉換
-    public void OpenCVHomography()
-    {
-        Mat inputMat = new Mat(tex.height, tex.width, CvType.CV_8UC4);
-        Utils.texture2DToMat(tex, inputMat, true, 1);
-
-        Mat outputMat = new Mat(1280, 720, CvType.CV_8UC4);
-        Mat perspectiveTransform = new Mat(3, 3, CvType.CV_64FC1);
-        perspectiveTransform.put(0,0, 1.355878779283638, -0.02591061968965643, -607.5356800237507,
-        0.01867744854896194, 1.363350078538568, -377.5589247155547,
-        -1.06168313224652e-05, -4.47573951089898e-06, 0.9997850073703513);
-        Imgproc.warpPerspective(inputMat, outputMat, perspectiveTransform, new Size(1280, 720));
-        Texture2D texThisLeft = new Texture2D(outputMat.cols(), outputMat.rows(), TextureFormat.RGBA32, false);
-        Utils.matToTexture2D(outputMat, texThisLeft, true, 1);
-        GameObject.Find("RGBPlaneOppoLeft").GetComponent<MeshRenderer>().material.mainTexture = texThisLeft;
-
-        perspectiveTransform.put(0, 0, 1.369831985432881, -0.02842386366966552, -704.327081931564,
-        0.01207212075557339, 1.372866877440848, -371.806804424705,
-        -4.412241088259502e-06, -1.472150541641732e-05, 1.013364995174869);
-        Imgproc.warpPerspective(inputMat, outputMat, perspectiveTransform, new Size(1280, 720));
-        Texture2D texThisRight = new Texture2D(outputMat.cols(), outputMat.rows(), TextureFormat.RGBA32, false);
-        Utils.matToTexture2D(outputMat, texThisRight, true, 1);
-        GameObject.Find("RGBPlaneOppoRight").GetComponent<MeshRenderer>().material.mainTexture = texThisRight;
     }
 
     private bool SingleClick()
