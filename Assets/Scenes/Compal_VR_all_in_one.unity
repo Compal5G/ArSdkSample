@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -392,7 +392,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f80df5f14799264d980bca7c65932bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  firstInitCamera: 2
+  firstInitCamera: 1
   qualcommObjects:
   - {fileID: 1024064522}
   - {fileID: 1837896594}
@@ -1862,6 +1862,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   checkTime: 2
+  whitchGesture: 0
 --- !u!114 &1818190777 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2671930362264217366, guid: 967e28c18e9c79e52a602c5417e5baab,

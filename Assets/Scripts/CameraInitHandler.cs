@@ -149,6 +149,7 @@ public class CameraInitHandler : MonoBehaviour
                 break;
             case CameraThirdPartyType.OnlyQualcommSVR:
                 QualcommInit();
+                SvrManager.Instance.getRGBFromNative = true;
                 MoveXvisioCameraToQualcommSVRCamera();
                 break;
             default:
@@ -165,7 +166,7 @@ public class CameraInitHandler : MonoBehaviour
     public int GestureId; // For gesture testing
     void Update()
     {
-        if (!XvGesture.Ready())
+        //if (!XvGesture.Ready())
         {
             //Debug.Log("XvGesture is not ready!");
             return;
