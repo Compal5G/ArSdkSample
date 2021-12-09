@@ -166,9 +166,15 @@ public class CameraInitHandler : MonoBehaviour
     public int GestureId; // For gesture testing
     void Update()
     {
-        //if (!XvGesture.Ready())
+
+        //If get RGB from native, do not handle gesture.
+        if(SvrManager.Instance.getRGBFromNative == true) {
+            return;
+        }
+
+        if (!XvGesture.Ready())
         {
-            //Debug.Log("XvGesture is not ready!");
+            Debug.Log("XvGesture is not ready!");
             return;
         }
 
