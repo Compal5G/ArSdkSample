@@ -5,10 +5,12 @@ using UnityEngine.UI;
 public class RaycastInput : MonoBehaviour
 {
     Material headPointMaterial;
+    LineRenderer lineRenderer;
     RaycastHit hitInfo;
     Transform hitTransform;
     protected Transform headPointTransform;
     protected Transform camTransform;
+    protected Transform pointLineTransform;
 
     protected ControlType controlType = ControlType.Gaze;
     protected Vector3 HeadPointSize;
@@ -24,20 +26,37 @@ public class RaycastInput : MonoBehaviour
         headPointTransform = Instantiate(headPointPrefab, transform).transform;
         headPointMaterial = headPointTransform.GetComponent<MeshRenderer>().material;
         headPointMaterial.SetColor("_Color", Color.white);
-        camTransform = headPointTransform;
+        camTransform = SvrManager.Instance.head.transform;
         HeadPointSize = headPointTransform.localScale;
+
+        GameObject pointLinePrefab = Resources.Load<GameObject>("PointLine");
+        pointLineTransform = Instantiate(pointLinePrefab, transform).transform;
+        lineRenderer = pointLineTransform.GetComponent<LineRenderer>();
+        pointLineTransform.gameObject.SetActive(false);
     }
 
     protected virtual void Update()
     {
-        Debug.DrawLine(camTransform.position, camTransform.position + camTransform.forward * 800, Color.blue);
-
+        if (controlType.Equals(ControlType.Controller))
+        {
+            if(!pointLineTransform.gameObject.activeSelf)
+                pointLineTransform.gameObject.SetActive(true);
+            lineRenderer.SetPosition(0, camTransform.position);
+            lineRenderer.SetPosition(1, headPointTransform.position);
+        }
+        else if (controlType.Equals(ControlType.Gaze))
+        {
+            pointLineTransform.gameObject.SetActive(false);
+        }
+        //Debug.DrawLine(camTransform.position, camTransform.position + camTransform.forward * 800, Color.blue);
         if (Physics.Raycast(camTransform.position, camTransform.forward, out hitInfo))
         {
             if (controlType.Equals(ControlType.Controller))
             {
-                headPointTransform.transform.position = new Vector3(hitInfo.point.x, hitInfo.point.y, hitInfo.point.z - 1);
-                headPointTransform.transform.localScale = new Vector3(hitInfo.distance/50.0f, hitInfo.distance / 50.0f, 1);
+                headPointTransform.position = new Vector3(hitInfo.point.x, hitInfo.point.y, hitInfo.point.z);
+                //headPointTransform.forward = hitInfo.transform.position - headPointTransform.position;
+                //headPointTransform.localScale = new Vector3(hitInfo.distance/70.0f, hitInfo.distance / 70.0f, hitInfo.distance / 70.0f);
+                
             }
 
             if (hitTransform != hitInfo.transform)

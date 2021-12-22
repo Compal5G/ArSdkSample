@@ -172,18 +172,18 @@ public class LoadRGB : MonoBehaviour, SvrManager.SvrEventListener
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.JoystickButton0))
-        {
-            if(!open) {
-                open = true;
-                Debug.Log("xslam_start_rgb_stream");
-                API.xslam_start_rgb_stream();
-            } else {
-                open = false;
-                Debug.Log("xslam_stop_rgb_stream");
-                API.xslam_stop_rgb_stream();              
-            }
-        }
+        //if (Input.GetKeyDown(KeyCode.JoystickButton0))
+        //{
+        //    if(!open) {
+        //        open = true;
+        //        Debug.Log("xslam_start_rgb_stream");
+        //        API.xslam_start_rgb_stream();
+        //    } else {
+        //        open = false;
+        //        Debug.Log("xslam_stop_rgb_stream");
+        //        API.xslam_stop_rgb_stream();              
+        //    }
+        //}
     }
 
     void SavePNG()
