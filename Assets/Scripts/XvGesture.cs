@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.Runtime.InteropServices;
+using UnityEngine.Android;
 
 public struct GestureInfo
 {
@@ -94,6 +95,10 @@ public class XvGesture : MonoBehaviour
 
     void Awake()
     {
+#if PLATFORM_ANDROID
+        Permission.RequestUserPermission(Permission.ExternalStorageRead);
+        Permission.RequestUserPermission(Permission.ExternalStorageWrite);
+#endif
         if (firstInstance == null)
         {
             firstInstance = this;
