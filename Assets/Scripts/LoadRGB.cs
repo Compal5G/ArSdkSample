@@ -83,7 +83,6 @@ public class LoadRGB : MonoBehaviour, SvrManager.SvrEventListener
                 }
             }
             Thread.Sleep(30);
-            count++;
         }
     }
     
@@ -159,14 +158,15 @@ public class LoadRGB : MonoBehaviour, SvrManager.SvrEventListener
                 lock (thisLock)
                 {
                    //Debug.Log("apply B");
+                    count++;
                     tex.SetPixels32(pixel32);
                     tex.Apply();
                     //Debug.Log("apply E");
-                    if(count == 50) {
-                        SavePNG();
-                        //count = 0;
-                        //API.xslam_start_rgb_stream();
-                    }
+                    // if(count == 50) {
+                    //     SavePNG();
+                    //     //count = 0;
+                    //     //API.xslam_start_rgb_stream();
+                    // }
                 }
 
             }
@@ -195,10 +195,10 @@ public class LoadRGB : MonoBehaviour, SvrManager.SvrEventListener
         string tempPath1 = Path.Combine(path, time + "_texture.png");
         File.WriteAllBytes(tempPath1, bytes);
 
-        byte[] destination = new byte[pixel32.Length * Marshal.SizeOf(typeof(Color32))];
-        Marshal.Copy(pixelPtr, destination, 0, destination.Length);
-        string tempPath2 = Path.Combine(path, time + "_.png");
-        File.WriteAllBytes(tempPath2, bytes);
+        // byte[] destination = new byte[pixel32.Length * Marshal.SizeOf(typeof(Color32))];
+        // Marshal.Copy(pixelPtr, destination, 0, destination.Length);
+        // string tempPath2 = Path.Combine(path, time + "_.png");
+        // File.WriteAllBytes(tempPath2, bytes);
     }
 
     private string GetAndroidExternalStoragePath()

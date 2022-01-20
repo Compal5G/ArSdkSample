@@ -52,7 +52,7 @@ public class XSlamCameraController : MonoBehaviour
     public bool enableGesture = true;
     public bool enableRGBFrame = true;
     public bool enableTOFFrame = true;
-    public bool enableVuforia = true;
+    public bool enableVuforia = false;
 
     void OnEnable()
     {
