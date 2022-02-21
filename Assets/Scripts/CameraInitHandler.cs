@@ -356,13 +356,13 @@ public class CameraInitHandler : MonoBehaviour
 
     void StartGazeEvent(Collider obj)
     {
-        if (cubeGazedMat != null)
+        if (cubeGazedMat != null && obj.GetComponent<Renderer>())
             obj.GetComponent<Renderer>().material = cubeGazedMat;
     }
 
     void EndGazeEvent(Collider obj)
     {
-        if (cubeNormalMat != null)
+        if (cubeNormalMat != null && obj.GetComponent<Renderer>())
             obj.GetComponent<Renderer>().material = cubeNormalMat;
     }
 

@@ -58,6 +58,8 @@ public class GazeCircleHandler : MonoBehaviour
 
         while (true)
         {
+            if (!pointMask || !point)
+                return;
             size = pointMask.rectTransform.sizeDelta;
             size += sizeDelta;
             pointMask.rectTransform.sizeDelta = size;
