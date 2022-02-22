@@ -1,13 +1,11 @@
 ﻿using UnityEngine;
 using System;
 using System.Runtime.InteropServices;
-
-
 using OpenCVForUnity.ArucoModule;
 using Apal_CalibrationCore;
 
 
-public class CalibrationAnker : MonoBehaviour
+public class CalibrationAnchor : MonoBehaviour
 {
     private Texture2D tex = null;
     private Color32[] pixel32;
@@ -23,12 +21,12 @@ public class CalibrationAnker : MonoBehaviour
     private Material mat;
 
     [SerializeField]
+    private CalibrationCore calibrationCore;
+    [SerializeField]
     private Transform MarkQuad;
 
-    int m_iClickCount = 0;
     bool m_bClicked = false;
     float m_fSingleClicktime = 0;
-    float m_fDoubleClicktime = 0;
     float m_fClickDelay = 0.5f;
     Quaternion qxyz;
     public enum ArUcoDictionary
@@ -53,14 +51,14 @@ public class CalibrationAnker : MonoBehaviour
     }
 
     private bool SingleClick()
-    {     
+    {
         if (Input.GetKeyDown(KeyCode.JoystickButton0))
-        {  
+        {
             if (m_bClicked == false)
             {
                 m_bClicked = true;
                 m_fSingleClicktime = Time.time;
-            }      
+            }
         }
         if (m_bClicked == true && Input.GetKeyUp(KeyCode.JoystickButton0) && Time.time - m_fSingleClicktime < m_fClickDelay)
         {
@@ -76,14 +74,21 @@ public class CalibrationAnker : MonoBehaviour
     void Update()
     {
         //滑鼠輸入控制
-        if(SingleClick())
+        if (SingleClick())
         {
             GetHeadCalibrationValue();
-            GetComponent<CalibrationCore>().SetTexture(tex);
-            GetComponent<CalibrationCore>().DetectMarkers(RGBCalibValue,HeadCalibValueR,HeadCalibValueT);
-            MarkQuad.localScale = new Vector3(0, 0, 0);
+            calibrationCore.DetectMarkers();
+
+            for (int i = 0; i < calibrationCore.detectARModel.Length; i++)
+            {
+                if (calibrationCore.detectARModel[i].ARTransform)
+                {
+                    calibrationCore.detectARModel[i].ARModel.SetActive(true);
+                    calibrationCore.detectARModel[i].IsDetected = true;
+                }
+            }
         }
-        
+
         //////
         if (API.xslam_ready())
         {
@@ -136,7 +141,7 @@ public class CalibrationAnker : MonoBehaviour
 
                 try
                 {
-                    
+
                     if (API.xslam_get_rgb_image_RGBA(pixelPtr, tex.width, tex.height, ref rgbTimestamp))
                     {
                         //Update the Texture2D with array updated in C++
@@ -182,15 +187,18 @@ public class CalibrationAnker : MonoBehaviour
         {
             RGBCalibValue[i] = SvrManager.Instance.GetSvrRGBCalibrationValue(i);
         }
+        calibrationCore.SetTexture(tex);
+        calibrationCore.InitMatrix(RGBCalibValue, HeadCalibValueR, HeadCalibValueT);
+        MarkQuad.localScale = new Vector3(0, 0, 0);
         hasValue = true;
     }
 
-    private void OnApplicationPause(bool pause)
-    {
-        if (pause)
-        {
-            AndroidJavaObject activity = new AndroidJavaClass("com.unity3d.player.UnityPlayer").GetStatic<AndroidJavaObject>("currentActivity");
-            activity.Call("finish");
-        }
-    }
+    //private void OnApplicationPause(bool pause)
+    //{
+    //    if (pause)
+    //    {
+    //        AndroidJavaObject activity = new AndroidJavaClass("com.unity3d.player.UnityPlayer").GetStatic<AndroidJavaObject>("currentActivity");
+    //        activity.Call("finish");
+    //    }
+    //}
 }
