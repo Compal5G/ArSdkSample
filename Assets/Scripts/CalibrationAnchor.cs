@@ -24,6 +24,8 @@ public class CalibrationAnchor : MonoBehaviour
     private CalibrationCore calibrationCore;
     [SerializeField]
     private Transform MarkQuad;
+    [SerializeField]
+    private Transform RecordView;
 
     bool m_bClicked = false;
     float m_fSingleClicktime = 0;
@@ -123,6 +125,10 @@ public class CalibrationAnchor : MonoBehaviour
                         pixelPtr = pixelHandle.AddrOfPinnedObject();
 
                         MarkQuad.GetComponent<Renderer>().material.mainTexture = tex;
+                        //Assign texture to another plane.
+                        if (RecordView)
+                            RecordView.GetComponent<Renderer>().material.mainTexture = tex;
+
                         if (mat != null)
                         {
                             //讓其他平面的材質也獲得影像
