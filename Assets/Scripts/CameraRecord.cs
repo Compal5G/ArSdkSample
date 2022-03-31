@@ -13,6 +13,20 @@ public class CameraRecord : MonoBehaviour
 
     void Start()
     {
+#if PLATFORM_ANDROID
+        if (!Permission.HasUserAuthorizedPermission(Permission.Microphone))
+        {
+            Permission.RequestUserPermission(Permission.Microphone);
+        }
+        if (!Permission.HasUserAuthorizedPermission(Permission.ExternalStorageRead))
+        {
+            Permission.RequestUserPermission(Permission.ExternalStorageRead);
+        }
+        if (!Permission.HasUserAuthorizedPermission(Permission.ExternalStorageWrite))
+        {
+            Permission.RequestUserPermission(Permission.ExternalStorageWrite);
+        }
+#endif
         recordManager = RecordManager.GetInstance();
         recordManager.SetCamera(recoardCamera);
         recordManager.SetWidthAndHeight(1280, 720);
